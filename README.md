@@ -6,20 +6,20 @@ include recipe in your metadata.rb file
 # LWRPs
 Currently the LWRPs have not been completely ported to the new zabbix-agent cookbook.
 
-libzabbix\_api\_call
-libzabbix\_application
-libzabbix\_discovery\_rule
-libzabbix\_graph
-libzabbix\_host\_group
-libzabbix\_hostgroup
-libzabbix\_host
-libzabbix\_interface
-libzabbix\_item
-libzabbix\_source
-libzabbix\_template
-libzabbix\_trigger\_dependency
-libzabbix\_trigger
-libzabbix\_user
+* libzabbix\_api\_call
+* libzabbix\_application
+* libzabbix\_discovery\_rule
+* libzabbix\_graph
+* libzabbix\_host\_group
+* libzabbix\_hostgroup
+* libzabbix\_host
+* libzabbix\_interface
+* libzabbix\_item
+* libzabbix\_source
+* libzabbix\_template
+* libzabbix\_trigger\_dependency
+* libzabbix\_trigger
+* libzabbix\_user
 
 
 # TODO
