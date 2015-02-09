@@ -206,7 +206,6 @@ action :update do
       }
       connection.query(create_interface_request)
     end
-
   end
   new_resource.updated_by_last_action(true)
 end
