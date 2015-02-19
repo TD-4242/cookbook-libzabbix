@@ -10,3 +10,5 @@ supports 'debian', '>= 6.0'
 supports 'redhat', '>= 5.0'
 supports 'centos', '>= 5.0'
 supports 'oracle', '>= 5.0'
+
+recommends 'zabbix-agent'
