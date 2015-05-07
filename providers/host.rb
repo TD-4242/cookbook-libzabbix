@@ -5,7 +5,10 @@ action :create_or_update do
       :params => {
         :filter => {
           :host => new_resource.hostname
-        }
+        },
+        :selectParentTemplates => ['host'],
+        :selectInterfaces => ['main','type','useip','ip','dns','port'],
+        :selectGroups => ['name']
       }
     }
     hosts = connection.query(get_host_request)
@@ -14,11 +17,79 @@ action :create_or_update do
       Chef::Log.info 'Proceeding to register this node to the Zabbix server'
       run_action :create
     else
-      Chef::Log.debug 'Going to update this host'
-      run_action :update
+      update_host = false
+
+      # Compare templates
+      current_templates = []
+      hosts[0]["parentTemplates"].each do |tmpl|
+        current_templates << tmpl['host']
+      end
+
+      if current_templates.sort != new_resource.templates.sort
+          update_host = true
+          Chef::Log.debug "Current templates and new templates differ"
+      end
+
+      # Compare groups
+      current_groups = []
+      hosts[0]["groups"].each do |grp|
+        current_groups << grp["name"]
+      end
+
+      if current_groups.sort != new_resource.groups.sort
+        update_host = true
+        Chef::Log.debug "Current groups and new groups differ"
+      end
+
+      # Compare interfaces
+      new_interfaces = []
+      new_resource.interfaces.each do |int|
+        new_interfaces << {
+          'type'  => int[:type]::value.to_s,
+          'main'  => int[:main].to_s,
+          'ip'    => int[:ip],
+          'dns'   => int[:dns],
+          'port'  => int[:port].to_s,
+          'useip' => int[:useip].to_s
+        }
+      end
+
+      # New interfaces that do not yet exist?
+      new_interfaces.each do |new_int|
+        found = false
+        hosts[0]['interfaces'].each do|cur_int|
+          if new_int.eql?(cur_int)
+            found = true
+          end
+        end
+        if !found
+          update_host = true
+          Chef::Log.debug "New hostinterface required"
+          Chef::Log.debug new_int
+        end
+      end
+
+      # Existing interfaces that should be removed?
+      hosts[0]['interfaces'].each do |cur_int|
+        found = false
+        new_interfaces.each do|new_int|
+          if new_int.eql?(cur_int)
+            found = true
+          end
+        end
+        if !found
+          update_host = true
+          Chef::Log.debug "Hostinterface to be removed"
+          Chef::Log.debug cur_int
+        end
+      end
+
+      if update_host
+        Chef::Log.debug 'Going to update this host'
+        run_action :update
+      end
     end
   end
-  new_resource.updated_by_last_action(true)
 end
 
 action :create do
