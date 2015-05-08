@@ -7,7 +7,7 @@ action :create_or_update do
           :host => new_resource.hostname
         },
         :selectParentTemplates => ['host'],
-        :selectInterfaces => ['main','type','useip','ip','dns','port'],
+        :selectInterfaces => ['main', 'type', 'useip', 'ip', 'dns', 'port'],
         :selectGroups => ['name']
       }
     }
@@ -21,31 +21,31 @@ action :create_or_update do
 
       # Compare templates
       current_templates = []
-      hosts[0]["parentTemplates"].each do |tmpl|
+      hosts[0]['parentTemplates'].each do |tmpl|
         current_templates << tmpl['host']
       end
 
       if current_templates.sort != new_resource.templates.sort
-          update_host = true
-          Chef::Log.debug "Current templates and new templates differ"
+        update_host = true
+        Chef::Log.debug 'Current templates and new templates differ'
       end
 
       # Compare groups
       current_groups = []
-      hosts[0]["groups"].each do |grp|
-        current_groups << grp["name"]
+      hosts[0]['groups'].each do |grp|
+        current_groups << grp['name']
       end
 
       if current_groups.sort != new_resource.groups.sort
         update_host = true
-        Chef::Log.debug "Current groups and new groups differ"
+        Chef::Log.debug 'Current groups and new groups differ'
       end
 
       # Compare interfaces
       new_interfaces = []
       new_resource.interfaces.each do |int|
         new_interfaces << {
-          'type'  => int[:type]::value.to_s,
+          'type'  => int[:type].value.to_s,
           'main'  => int[:main].to_s,
           'ip'    => int[:ip],
           'dns'   => int[:dns],
@@ -55,33 +55,37 @@ action :create_or_update do
       end
 
       # New interfaces that do not yet exist?
+      found = false
       new_interfaces.each do |new_int|
-        found = false
         hosts[0]['interfaces'].each do|cur_int|
           if new_int.eql?(cur_int)
             found = true
+            break
           end
-        end
-        if !found
-          update_host = true
-          Chef::Log.debug "New hostinterface required"
-          Chef::Log.debug new_int
         end
       end
 
+      unless found
+        update_host = true
+        Chef::Log.debug 'New hostinterface required'
+        Chef::Log.debug new_int
+      end
+
       # Existing interfaces that should be removed?
+      found = false
       hosts[0]['interfaces'].each do |cur_int|
-        found = false
         new_interfaces.each do|new_int|
           if new_int.eql?(cur_int)
             found = true
+            break
           end
         end
-        if !found
-          update_host = true
-          Chef::Log.debug "Hostinterface to be removed"
-          Chef::Log.debug cur_int
-        end
+      end
+
+      unless found
+        update_host = true
+        Chef::Log.debug 'Hostinterface to be removed'
+        Chef::Log.debug cur_int
       end
 
       if update_host
