@@ -87,6 +87,7 @@ action :create_or_update do
       if update_host
         Chef::Log.debug 'Going to update this host'
         run_action :update
+        new_resource.updated_by_last_action(true)
       end
     end
   end
