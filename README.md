@@ -1,7 +1,7 @@
 This cookbook adds LWRPs that can be used to dynamically add objects to the zabbix server.
 
 [![CK Version](http://img.shields.io/cookbook/v/libzabbixsvg)](https://supermarket.getchef.com/cookbooks/libzabbix)
-[![Build Status](https://secure.travis-ci.org/TD-4242/libzabbix.png)](http://travis-ci.org/TD-4242/zabbix-agent)
+[![Build Status](https://secure.travis-ci.org/TD-4242/libzabbix.png)](http://travis-ci.org/TD-4242/cookbook-libzabbix)
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/TD-4242/zabbix-agent?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## USAGE
